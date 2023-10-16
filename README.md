@@ -1,4 +1,7 @@
-This boilerplate is a simple example of how to use Objective-C 2.0 and Foundation on Linux with GNUstep.
+This boilerplate is a simple example of how to build a simple Objective-C 2.0 project on Linux with GNUstep,
+and macOS with Apple frameworks.
+
+## GNUstep
 We use the GNUstep configuration tool `gnustep-config` to get the GNUstep and Objective-C specific compiler
 and linker flags.
 
@@ -15,6 +18,12 @@ Note that the Makefiles directory might be located in a different place on your 
 
 Meson also looks for CC, and OBJC environment variables to be set. Use clang as the compiler, as GCC does not
 support Objective-C 2.0.
+
+## Apple frameworks
+On macOS, meson will automatically find the Apple frameworks. Currently, only the Foundation framework is used,
+but you can add more frameworks by adding them to the modules array in `meson.build`.
+
+Be aware that some frameworks are not available on Linux, and you will need to use a different implementation.
 
 ## Dependencies
 - A working GNUstep installation with Objective-C 2.0 support (libobjc2, gnustep-make, gnustep-base)
