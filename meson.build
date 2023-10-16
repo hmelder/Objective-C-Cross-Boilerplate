@@ -7,6 +7,7 @@ if objc_compiler.get_id() != 'clang'
 endif
  
 dependencies_to_link = []
+# Common Objective-C flags
 objc_flags = []
 
 if host_machine.system() == 'linux'
@@ -20,7 +21,6 @@ if host_machine.system() == 'linux'
     gnustep_base_libs = run_command(gnustep_config, '--base-libs', check: true).stdout().strip().split()
 
     # Filter out flags that are handled by Meson's built-in options
-
     foreach flag : gnustep_flags
     if flag != '-Wall' and flag != '-g' and flag != '-O2'
         objc_flags += flag
