@@ -5,34 +5,49 @@ objc_compiler = meson.get_compiler('objc')
 if objc_compiler.get_id() != 'clang'
   error('Clang is required for this project. Please set CC=clang, and OBJC=clang before running Meson.')
 endif
+ 
+dependencies_to_link = []
+objc_flags = []
 
-# Objective-C (GNUstep) support from gnustep-config
-gnustep_config = find_program('gnustep-config', required: true)
-if not gnustep_config.found()
-    error('GNUstep is required for this project. Please install GNUstep and ensure gnustep-config is in your PATH. You might want to source GNUstep.sh before running Meson.')
+if host_machine.system() == 'linux'
+    # Objective-C (GNUstep) support from gnustep-config
+    gnustep_config = find_program('gnustep-config', required: true)
+    if not gnustep_config.found()
+        error('GNUstep is required for this project. Please install GNUstep and ensure gnustep-config is in your PATH. You might want to source GNUstep.sh before running Meson.')
+    endif
+
+    gnustep_flags = run_command(gnustep_config, '--objc-flags', check: true).stdout().strip().split()
+    gnustep_base_libs = run_command(gnustep_config, '--base-libs', check: true).stdout().strip().split()
+
+    # Filter out flags that are handled by Meson's built-in options
+
+    foreach flag : gnustep_flags
+    if flag != '-Wall' and flag != '-g' and flag != '-O2'
+        objc_flags += flag
+    endif
+    endforeach
+
+    add_project_link_arguments(gnustep_base_libs, language: 'objc')
+elif host_machine.system() == 'darwin'
+  # Properly link against the Foundation framework
+  foundation_dep = dependency('appleframeworks', modules: ['Foundation'])
+  dependencies_to_link = foundation_dep
+
+  add_project_link_arguments('-lobjc', language: 'objc')
+else
+  error('Currently, only linux and darwin are whitelisted targets!')
 endif
-
-gnustep_flags = run_command(gnustep_config, '--objc-flags', check: true).stdout().strip().split()
-gnustep_base_libs = run_command(gnustep_config, '--base-libs', check: true).stdout().strip().split()
-
-# Filter out flags that are handled by Meson's built-in options
-filtered_objc_flags = []
-foreach flag : gnustep_flags
-if flag != '-Wall' and flag != '-g' and flag != '-O2'
-    filtered_objc_flags += flag
-endif
-endforeach
 
 # Enable ARC (Automatic Reference Counting)
-filtered_objc_flags += '-fobjc-arc'
-
-# Add Objective-C flags and libraries
-add_project_arguments(filtered_objc_flags, language: 'objc')
-add_project_link_arguments(gnustep_base_libs, language: 'objc')
+objc_flags += '-fobjc-arc'
+    
+# Add Objective-C flags
+add_project_arguments(objc_flags, language: 'objc')
 
 source = [
     # Objc files
     'src/main.m',
 ]
 
-executable('objc-boilerplate', source)
+executable('objc-boilerplate', source, dependencies: dependencies_to_link)
+
