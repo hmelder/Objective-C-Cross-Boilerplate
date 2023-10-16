@@ -26,7 +26,8 @@ but you can add more frameworks by adding them to the modules array in `meson.bu
 Be aware that some frameworks are not available on Linux, and you will need to use a different implementation.
 
 ## Dependencies
-- A working GNUstep installation with Objective-C 2.0 support (libobjc2, gnustep-make, gnustep-base)
+### Linux
+- A working GNUstep installation with Objective-C 2.0 support (libobjc2, gnustep-make, gnustep-base).
   Please note that as of writing this, the GNUstep debian packages do not support Objective-C 2.0, and use the GCC runtime.
 
 ## Building
