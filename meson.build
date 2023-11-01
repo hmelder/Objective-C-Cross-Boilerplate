@@ -31,7 +31,7 @@ if host_machine.system() == 'linux'
 elif host_machine.system() == 'darwin'
   # Properly link against the Foundation framework
   foundation_dep = dependency('appleframeworks', modules: ['Foundation'])
-  dependencies_to_link = foundation_dep
+  dependencies_to_link += foundation_dep
 
   add_project_link_arguments('-lobjc', language: 'objc')
 else
