@@ -1,4 +1,4 @@
-project('objc-boilerplate', 'objc', version : '0.1.0')
+project('objc-boilerplate', 'objc', version : '0.2.0')
 
 # Ensure clang is used for Objective-C
 objc_compiler = meson.get_compiler('objc')
