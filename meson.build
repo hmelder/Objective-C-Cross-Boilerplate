@@ -10,7 +10,8 @@ dependencies_to_link = []
 # Common Objective-C flags
 objc_flags = []
 
-if host_machine.system() == 'linux'
+# Use GNUstep on non-Darwin platforms
+if host_machine.system() != 'darwin'
     # Objective-C (GNUstep) support from gnustep-config
     gnustep_config = find_program('gnustep-config', required: true)
     if not gnustep_config.found()
@@ -28,14 +29,12 @@ if host_machine.system() == 'linux'
     endforeach
 
     add_project_link_arguments(gnustep_base_libs, language: 'objc')
-elif host_machine.system() == 'darwin'
+else
   # Properly link against the Foundation framework
   foundation_dep = dependency('appleframeworks', modules: ['Foundation'])
   dependencies_to_link += foundation_dep
 
   add_project_link_arguments('-lobjc', language: 'objc')
-else
-  error('Currently, only linux and darwin are whitelisted targets!')
 endif
 
 # Enable ARC (Automatic Reference Counting)
